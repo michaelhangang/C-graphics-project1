@@ -16,6 +16,12 @@
     <Filter Include="ShaderManager">
       <UniqueIdentifier>{521d1c20-2720-49d0-8164-4490ec6fb555}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VAOManager">
+      <UniqueIdentifier>{aa4aba29-5833-4c1b-bf23-0a78d0aead65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{7da2450a-c57f-4adb-ab70-de141b7328d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -27,12 +33,30 @@
     <ClCompile Include="Shader.cpp">
       <Filter>ShaderManager</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VAOManager.cpp">
+      <Filter>VAOManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
       <Filter>ShaderManager</Filter>
     </ClInclude>
     <ClInclude Include="globe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="VAOManager.h">
+      <Filter>VAOManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,5 +67,19 @@
     <None Include="fragment.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="bun.ply">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="inds.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="vers.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="cube.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -15,8 +15,8 @@ void  Shader::createShader() {
 	}
 	
 	loadSourceFromFile();
-	string error;
-	compileShaderFromSource(*this,error);
+	compileShaderFromSource(*this);
+	checkShaderCompile(*this);
 }
 
 // Returns bool if didn't load
@@ -43,42 +43,10 @@ bool Shader::loadSourceFromFile()
 	return true;		// Return the string (from the sstream)
 }
 
-//check compile error
-bool Shader::wasThereACompileError(unsigned int shaderID,string &errorText)
+
+
+bool Shader::compileShaderFromSource(Shader &shader)
 {
-	errorText = "";	// No error
-
-	GLint isCompiled = 0;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &isCompiled);
-
-
-	if (isCompiled == GL_FALSE)
-	{
-		GLint maxLength = 0;
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &maxLength);
-
-		char* pLogText = new char[maxLength];
-		// Fill with zeros, maybe...?
-		glGetShaderInfoLog(shaderID, maxLength, &maxLength, pLogText);
-		// Copy char array to string
-		errorText.append(pLogText);
-
-		// Extra code that Michael forgot wasn't there... 
-		this->m_lastError.append("\n");
-		this->m_lastError.append(errorText);
-
-
-		delete[] pLogText;	// Oops
-
-		return true;	// There WAS an error
-	}
-	return false; // There WASN'T an error
-}
-
-bool Shader::compileShaderFromSource(Shader &shader, string &error)
-{
-	error = "";
-
 	const unsigned int MAXLINESIZE = 8 * 1024;	// About 8K PER LINE, which seems excessive
 
 	unsigned int numberOfLines = static_cast<unsigned int>(shader.vecSource.size());
@@ -116,18 +84,16 @@ bool Shader::compileShaderFromSource(Shader &shader, string &error)
 		}
 		// And delete the original char** array
 		delete[] arraySource;
-
-		// Did it work? 
-		string errorText = "";
-		if (this->wasThereACompileError(shader.Id, errorText))
-		{
-			stringstream ssError;
-			ssError << shader.getShaderTypeString();
-			ssError << " compile error: ";
-			ssError << errorText;
-			error = ssError.str();
-			return false;
-		}
-
 		return true;
 	}
+
+void Shader::checkShaderCompile(Shader shader) {
+	int success;
+	char infoLog[512];
+	glGetShaderiv(shader.Id, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(shader.Id, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+}

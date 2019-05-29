@@ -15,28 +15,23 @@ public:
 	unsigned int Id;
 	string glslFile;
 	vector<string> vecSource;
-	
-	string m_lastError;
 
 	string getShaderTypeString() { 
 		if (this->type == VERTEX) {
 			return "VERTEX_SHADER";
-
 		}
 
 		else if (this->type == FRAGMENT) {
 			return "FRAGMENT_SHADER";
 		}
-
 		else
-			return "";
+			return "Unknown ";
 	}
 	
 	Shader(shaderType type,string filename);
 
 	void  createShader();
-	bool wasThereACompileError(unsigned int shaderID, string &errorText);
 	bool loadSourceFromFile();
-	bool compileShaderFromSource(Shader &shader, string &error);
-
+	bool compileShaderFromSource(Shader &shader);
+	void checkShaderCompile(Shader shader);
 };
