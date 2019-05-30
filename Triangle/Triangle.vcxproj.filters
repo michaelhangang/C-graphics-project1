@@ -13,14 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ShaderManager">
-      <UniqueIdentifier>{521d1c20-2720-49d0-8164-4490ec6fb555}</UniqueIdentifier>
-    </Filter>
     <Filter Include="VAOManager">
       <UniqueIdentifier>{aa4aba29-5833-4c1b-bf23-0a78d0aead65}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mesh">
       <UniqueIdentifier>{7da2450a-c57f-4adb-ab70-de141b7328d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{521d1c20-2720-49d0-8164-4490ec6fb555}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,7 +31,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>ShaderManager</Filter>
+      <Filter>Shader</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Mesh</Filter>
@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
-      <Filter>ShaderManager</Filter>
+      <Filter>Shader</Filter>
     </ClInclude>
     <ClInclude Include="globe.h">
       <Filter>Header Files</Filter>
@@ -68,7 +68,16 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="bun.ply">
-      <Filter>Source Files</Filter>
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="dolphin_xyzn.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="xyzrgb_dragon_simple.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="xyzrgb_dragon_simple_Small.ply">
+      <Filter>Mesh</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

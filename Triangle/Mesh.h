@@ -2,6 +2,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include<string>
+#include"Model.h"
 using namespace std;
 
 class Mesh {
@@ -14,4 +15,5 @@ public:
 	float scale;		// 1.0f  
 	bool isWireframe;		// false
 	Mesh();
+	Mesh(Model model);
 };

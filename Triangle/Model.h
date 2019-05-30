@@ -19,7 +19,8 @@ public:
 	unsigned int numberOfIndices;
 	unsigned int numberOfVertices;
 	//
-	Model(string fileName);
+	Model();
+	Model(string name,string fileName);
 	sVert* pVertices;
 	unsigned int* pIndices;
 };

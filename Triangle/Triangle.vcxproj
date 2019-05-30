@@ -169,8 +169,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bun.ply" />
+    <None Include="dolphin_xyzn.ply" />
     <None Include="fragment.glsl" />
     <None Include="vertex.glsl" />
+    <None Include="xyzrgb_dragon_simple.ply" />
+    <None Include="xyzrgb_dragon_simple_Small.ply" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube.txt" />

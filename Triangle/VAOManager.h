@@ -7,7 +7,7 @@ using namespace std;
 class VAOManager {
 
 public:
-	 void loadModelToVAO(string file,Model &name);
-
+	 void loadModelToVAO(Model &name);
+	 map<string, Model> dateVAO;
 
 };

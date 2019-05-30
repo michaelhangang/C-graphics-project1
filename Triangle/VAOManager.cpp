@@ -6,11 +6,11 @@
 #include <glm/vec4.hpp>
 #include <vector>
 #include"Model.h"
-void VAOManager::loadModelToVAO(string file, Model &modelName) {
+void VAOManager::loadModelToVAO(Model &modelName) {
 
 
 	//load ply file 
-	ifstream iff(file);
+	ifstream iff(modelName.fileName);
 	if (iff.is_open()) {
 		string temp;
 		while (iff >> temp) {
@@ -88,6 +88,6 @@ void VAOManager::loadModelToVAO(string file, Model &modelName) {
 	//unbind VAO
 	glBindVertexArray(0);
 
-
+	this->dateVAO[modelName.name] = modelName;
 
 }
