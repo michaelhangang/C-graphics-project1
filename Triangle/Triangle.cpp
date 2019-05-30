@@ -16,12 +16,16 @@
 #include<fstream>
 #include"VAOManager.h"
 #include"Mesh.h"
-
+using namespace glm;
 
 //auto adjust window when window is changed
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //input control
-void processInput(GLFWwindow *window);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+glm::vec3 cameraPos = glm::vec3(0.0f,0.0f, 4.5f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+vector<Mesh> MeshToDraw;
 
 int main(void)
 {	
@@ -32,13 +36,15 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	//create a window
-	GLFWwindow* window = glfwCreateWindow(1440, 900, "OpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
+
+	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
@@ -48,7 +54,7 @@ int main(void)
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-
+	glfwSwapInterval(1);
 	//create shaders
 	Shader vertexShader(Shader::shaderType::VERTEX,"vertex.glsl");
 	vertexShader.createShader();
@@ -73,32 +79,41 @@ int main(void)
 	// retrieve the matrix uniform locations
 	unsigned int modelLoc = glGetUniformLocation(shaderProgram, "model");
 	unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-	unsigned int pLoc = glGetUniformLocation(shaderProgram, "projection");
+	unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 	
 	//
 	
 	VAOManager VAOManager;
+	//load model 1
 	Model dragon("dragon","xyzrgb_dragon_simple.ply");
 	VAOManager.loadModelToVAO(dragon);
 	
-
+	//load model 2
 	Model bunny("bunny","bun.ply");
 	VAOManager.loadModelToVAO(bunny);
+	
+	//load model 3
 
-	vector<Mesh> MeshToDraw;
+	//load model 4
+
+
+	
 	//create mesh
 	Mesh dragon1(dragon);
+	dragon1.pos = glm::vec3(1.4f,0.f,0.f);
+	dragon1.scale = 0.007f;
+	dragon1.orientation = glm::vec3(0.f, glm::radians(-40.f),0.f);
 	MeshToDraw.push_back(dragon1);
-	//dragon1.
+	//
 	Mesh rabbit1(bunny);
+	rabbit1.pos = glm::vec3(1.7f, 0.f, 0.f);
+	rabbit1.scale = 2.f;
+	rabbit1.orientation = glm::vec3(0.f, glm::radians(0.f), 0.f);
 	MeshToDraw.push_back(rabbit1);
-
+	
 //draw graphics
 	while (!glfwWindowShouldClose(window))
 	{
-		//input
-		processInput(window);
-		//
 		float ratio;
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
@@ -113,59 +128,60 @@ int main(void)
 		//activate shader program
 		glUseProgram(shaderProgram);
 	
-		// create transformations
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 scale = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
-		scale = glm::scale(scale,glm::vec3( 0.007f, 0.007f, 0.007f));
-		
+		//perspective 
+		glm::mat4 projection =
+			glm::perspective(glm::radians(45.0f), ratio, 0.1f, 1000.0f);
 
-		// pass them to the shaders (3 different ways)
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//camera
+		glm::mat4 view = glm::mat4(1.0f);	
+		view = glm::lookAt(cameraPos,
+			cameraTarget,
+			cameraUp);
+
+		//set up view and projection value in shader
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(scale));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-
-		Model x= VAOManager.dateVAO.find(dragon1.modelType)->second;
-		glBindVertexArray(x.VAOId);
-		glDrawElements(GL_TRIANGLES, x.numberOfIndices, GL_UNSIGNED_INT, 0);
+		for (auto mesh : MeshToDraw) {
+			// create transformations
+			glm::mat4 model = glm::mat4(1.0f);
+			//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			//glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			
+			glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
+				mesh.orientation.z,
+				glm::vec3(0.0f, 0.0, 1.0f));
 		
+			glm::mat4 rotateY = glm::rotate(glm::mat4(1.0f),
+				mesh.orientation.y,
+				glm::vec3(0.0f, 1.0, 0.0f));
+			
+			glm::mat4 rotateX = glm::rotate(glm::mat4(1.0f),
+				mesh.orientation.x,
+				glm::vec3(1.0f, 0.0, 0.0f));
+			
+			glm::mat4 move = glm::translate(glm::mat4(1.0f), mesh.pos);
+			glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(mesh.scale, mesh.scale, mesh.scale));
+			model = rotateZ* rotateY *rotateX* move * scale;
 
-		// create transformations
-		glm::mat4 model1 = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		glm::mat4 view1 = glm::mat4(1.0f);
-		glm::mat4 projection1 = glm::mat4(1.0f);
-		//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model1 = glm::rotate(model1, (float)glfwGetTime() * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		view1 = glm::translate(view1, glm::vec3(0.3f, 0.0f, 0.0f));
-		projection1 = glm::scale(projection1, glm::vec3(2.f, 2.f, 2.0f));
-		
+			// pass them to the shaders (3 different ways)
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		// pass them to the shaders (3 different ways)
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model1));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view1));
-		// note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-		glUniformMatrix4fv(pLoc, 1, GL_FALSE, glm::value_ptr(projection1));
+			Model mod = VAOManager.dateVAO.find(mesh.modelType)->second;
+			glBindVertexArray(mod.VAOId);
+			glDrawElements(GL_TRIANGLES, mod.numberOfIndices, GL_UNSIGNED_INT, 0);
 
-
-		Model y = VAOManager.dateVAO.find(rabbit1.modelType)->second;
-		glBindVertexArray(y.VAOId);
-		glDrawElements(GL_TRIANGLES, y.numberOfIndices, GL_UNSIGNED_INT, 0);
+		}
 		
-		
-		
+	
 		//swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-
-	//stop 
+	glfwDestroyWindow(window);
 	glfwTerminate();
-	return 0;
+	exit(EXIT_SUCCESS);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -174,9 +190,31 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 //input 
-void processInput(GLFWwindow *window)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+	const float cameraSpeed = 0.05f;
 
+	if (key == GLFW_KEY_W )
+		cameraPos.z -= cameraSpeed;
+	if (key == GLFW_KEY_S )
+		cameraPos.z += cameraSpeed;
+	if (key == GLFW_KEY_A)
+		cameraPos.x -= cameraSpeed;
+	if (key == GLFW_KEY_D )
+		cameraPos.x += cameraSpeed;
+	if (key == GLFW_KEY_Q )
+		cameraPos.y += cameraSpeed;
+	if (key == GLFW_KEY_E )
+		cameraPos.y -= cameraSpeed;
+
+	if (key == GLFW_KEY_R ) {
+		MeshToDraw[0].pos.x += 0.1f;
+		cout << MeshToDraw[0].pos.x << endl;
+	}
+	if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+		MeshToDraw[0].pos.x -= 0.1f;
+		cout << MeshToDraw[0].pos.x << endl;
+	}
 }
