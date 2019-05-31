@@ -9,11 +9,11 @@ class Mesh {
 public:	
 	string modelType;
 	
-	glm::vec3 pos;			// 0,0,0 (origin)
-	glm::vec4 colour;		// 0,0,0,1 (black)
-	glm::vec3 orientation;	// aka rotation 
-	float scale;		// 1.0f  
-	bool isWireframe;		// false
+	glm::vec3 pos;			
+	glm::vec3 colour;		
+	glm::vec3 orientation;	 
+	float scale;		
+	bool isWireframe;	
 	Mesh();
 	Mesh(Model model);
 };

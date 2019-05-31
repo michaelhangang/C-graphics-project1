@@ -76,7 +76,7 @@
     <None Include="xyzrgb_dragon_simple.ply">
       <Filter>Mesh</Filter>
     </None>
-    <None Include="xyzrgb_dragon_simple_Small.ply">
+    <None Include="Sphere.ply">
       <Filter>Mesh</Filter>
     </None>
   </ItemGroup>
