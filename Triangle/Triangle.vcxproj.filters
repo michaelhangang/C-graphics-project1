@@ -22,6 +22,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{521d1c20-2720-49d0-8164-4490ec6fb555}</UniqueIdentifier>
     </Filter>
+    <Filter Include="LightManager">
+      <UniqueIdentifier>{c348f50f-c22e-4d84-b795-bf131e15ec89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Triangle.cpp">
@@ -79,15 +82,12 @@
     <None Include="Sphere.ply">
       <Filter>Mesh</Filter>
     </None>
+    <None Include="MilleniumFalcon_xyz_n_rgba_uv(simplified).ply">
+      <Filter>Mesh</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="inds.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="vers.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-    <Text Include="cube.txt">
+    <Text Include="Save.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

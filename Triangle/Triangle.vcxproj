@@ -171,14 +171,13 @@
     <None Include="bun.ply" />
     <None Include="dolphin_xyzn.ply" />
     <None Include="fragment.glsl" />
+    <None Include="MilleniumFalcon_xyz_n_rgba_uv(simplified).ply" />
     <None Include="Sphere.ply" />
     <None Include="vertex.glsl" />
     <None Include="xyzrgb_dragon_simple.ply" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="cube.txt" />
-    <Text Include="inds.txt" />
-    <Text Include="vers.txt" />
+    <Text Include="Save.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

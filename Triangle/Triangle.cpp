@@ -23,11 +23,21 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //input control
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 bool isShiftDownAlone(int mods);
-glm::vec3 cameraPos = glm::vec3(0.0f,0.0f, 4.5f);
+void SaveEverything(void);
+
+//global variable
+glm::vec3 cameraPos = glm::vec3(0.0f,0.0f, 18.5f);
+glm::vec3 cameraPos2 = glm::vec3(0.0f, 5.0f, 14.5f);
+glm::vec3 cameraPos3 = glm::vec3(-5.0f, 0.0f, 14.5f);
+
 glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
 vector<Mesh> MeshToDraw;
 int indexSelectedMesh = 0;
+float rotationDegree = 0.f;
+
+
 int main(void)
 {	
 	//initialize and configure
@@ -97,30 +107,40 @@ int main(void)
 	Model sphere("sphere", "Sphere.ply");
 	VAOManager.loadModelToVAO(sphere);
 	//load model 4
+	Model ship("ship", "MilleniumFalcon_xyz_n_rgba_uv(simplified).ply");
+	VAOManager.loadModelToVAO(ship);
 
 
 	
 	//create dragon
-	Mesh dragon1(dragon);
-	dragon1.pos = glm::vec3(-2.6f,0.f,0.f);
+	Mesh dragon1("dragon1",dragon);
+	dragon1.pos = glm::vec3(0.9, -0.2, -2);
 	dragon1.scale = 0.009f;
-	dragon1.orientation = glm::vec3(0.f, glm::radians(-40.f),0.f);
+	dragon1.orientation = glm::vec3(0.f, glm::radians(124.f),0.f);
 	dragon1.colour = vec3(1.0f, 0.5f, 0.31f);
 	MeshToDraw.push_back(dragon1);
 	//
-	Mesh rabbit1(bunny);
-	rabbit1.pos = glm::vec3(1.7f, 0.f, 0.f);
-	rabbit1.scale = 2.f;
-	rabbit1.orientation = glm::vec3(0.f, glm::radians(0.f), 0.f);
+	Mesh rabbit1("rabbit1",bunny);
+	rabbit1.pos = glm::vec3(-0.5, 1.49012e-08, -4);
+	rabbit1.scale = 9.7;
+	rabbit1.orientation = glm::vec3(0.f, radians(0.f), 0.f);
 	rabbit1.colour = vec3(0.7f, 0.6f, 0.2f);
 	MeshToDraw.push_back(rabbit1);
 	//
-	Mesh light(sphere);
-	light.pos = glm::vec3(1.2f, 1.f, 0.8f);
+	Mesh light("light",sphere);
+	light.pos = glm::vec3(-2, 1, -3.3);
 	light.scale = 0.2f;
 	//rabbit1.orientation = glm::vec3(0.f, glm::radians(0.f), 0.f);
 	light.colour = vec3(1.f, 1.f, 1.f);
 	MeshToDraw.push_back(light);
+
+	//
+	Mesh spaceship("spaceship", ship);
+	spaceship.pos = glm::vec3(2.3, -1.6, 3.7);
+	spaceship.scale = 2.2f;
+	spaceship.orientation = glm::vec3(2.14675, glm::radians(0.f), 0.f);
+	spaceship.colour = vec3(1.f, 1.f, 1.f);
+	MeshToDraw.push_back(spaceship);
 
 	//light
 
@@ -201,14 +221,15 @@ int main(void)
 
 			unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 			glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+			//atten
 			unsigned int lightAttenLoc = glGetUniformLocation(shaderProgram, "theLights[0].atten");
-			vec3 lightAtten = vec3(1.0f, 0.12f, 0.07f);
+			vec3 lightAtten = vec3(1.0f, 0.09f, 0.0032f);
 			glUniform3f(lightAttenLoc, lightAtten.x, lightAtten.y, lightAtten.z);
 			unsigned int lightAmbLoc = glGetUniformLocation(shaderProgram, "theLights[0].ambient");
 			glUniform1f(lightAmbLoc,0.1f);
 			unsigned int lightSpeLoc = glGetUniformLocation(shaderProgram, "theLights[0].specular");
 			glUniform1f(lightSpeLoc,1.0f);
-			
+			//color
 			unsigned int lightDiffLoc = glGetUniformLocation(shaderProgram, "theLights[0].diffuse");
 			glUniform3f(lightDiffLoc, 1.0f, 1.f, 1.f);
 
@@ -239,7 +260,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	const float cameraSpeed = 0.05f;
+	//change mesh
 	if (isShiftDownAlone(mods)) {
+		//change postion
 		if (key == GLFW_KEY_A) {
 			MeshToDraw[indexSelectedMesh].pos.x += 0.1f;
 			cout << MeshToDraw[indexSelectedMesh].pos.x << endl;
@@ -266,17 +289,48 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			cout << MeshToDraw[indexSelectedMesh].pos.x << endl;
 		}
 
+		//change scale
 		if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
-			MeshToDraw[indexSelectedMesh].scale += 0.01f;
+			MeshToDraw[indexSelectedMesh].scale += 0.1f;
 			cout << MeshToDraw[indexSelectedMesh].scale << endl;
 		}
 		if (key == GLFW_KEY_X && action == GLFW_PRESS) {
-			MeshToDraw[indexSelectedMesh].scale -= 0.001f;
+			MeshToDraw[indexSelectedMesh].scale -= 0.1f;
 			cout << MeshToDraw[indexSelectedMesh].scale << endl;
 		}
-		return;
 
+		//change orientation
+		if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+			MeshToDraw[indexSelectedMesh].orientation.x = radians(rotationDegree++);
+			cout << MeshToDraw[indexSelectedMesh].orientation.x <<" "<< rotationDegree << endl;
+		}
+		if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
+			MeshToDraw[indexSelectedMesh].orientation.y = radians(rotationDegree++);
+			cout << MeshToDraw[indexSelectedMesh].orientation.y << " " << rotationDegree << endl;
+		}
+		if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+			MeshToDraw[indexSelectedMesh].orientation.z = radians(rotationDegree++);
+			cout << MeshToDraw[indexSelectedMesh].orientation.z << " " << rotationDegree << endl;
+		}
+		//change color
+		if (key == GLFW_KEY_1) {
+			MeshToDraw[indexSelectedMesh].colour.x +=0.01f ;
+			cout << MeshToDraw[indexSelectedMesh].colour.x << endl;
+		}
+		if (key == GLFW_KEY_2) {
+			MeshToDraw[indexSelectedMesh].colour.y += 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].colour.y << endl;
+		}
+		if (key == GLFW_KEY_3) {
+			MeshToDraw[indexSelectedMesh].colour.z += 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].colour.z << endl;
+		}
+
+		return;
 	}
+	//save 
+	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
+		SaveEverything();
 
 	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
 		indexSelectedMesh ++;
@@ -298,10 +352,42 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cameraPos.y += cameraSpeed;
 	if (key == GLFW_KEY_E )
 		cameraPos.y -= cameraSpeed;
-
+	//change camera
+	if (key == GLFW_KEY_C)
+		cameraPos = cameraPos2;
+	if (key == GLFW_KEY_V)
+		cameraPos = cameraPos3;
 	//
 	
 }
+
+void SaveEverything(void)
+{
+	std::ofstream saveFile("Save.txt");
+
+	for (unsigned int index = 0;
+		index != MeshToDraw.size(); index++)
+	{
+		saveFile
+			<< MeshToDraw[index].name << " postion "
+			<< MeshToDraw[index].pos.x << " "
+			<< MeshToDraw[index].pos.y << " "
+			<< MeshToDraw[index].pos.z << " orientation "
+			<< MeshToDraw[index].orientation.x << " "
+			<< MeshToDraw[index].orientation.y << " "
+			<< MeshToDraw[index].orientation.z << " scale "
+			<< MeshToDraw[index].scale << " color "
+		    << MeshToDraw[index].colour.x << " "
+		    << MeshToDraw[index].colour.y << " "
+		    << MeshToDraw[index].colour.z << " \n";
+
+	}
+
+	saveFile.close();
+	cout << "Saved...." << endl;
+	return;
+}
+
 
 bool isShiftDownAlone(int mods)
 {

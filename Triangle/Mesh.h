@@ -8,12 +8,12 @@ using namespace std;
 class Mesh {
 public:	
 	string modelType;
-	
+	string name;
 	glm::vec3 pos;			
 	glm::vec3 colour;		
 	glm::vec3 orientation;	 
 	float scale;		
 	bool isWireframe;	
 	Mesh();
-	Mesh(Model model);
+	Mesh(string name,Model model);
 };
