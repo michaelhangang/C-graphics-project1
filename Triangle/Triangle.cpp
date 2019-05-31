@@ -16,6 +16,7 @@
 #include<fstream>
 #include"VAOManager.h"
 #include"Mesh.h"
+#include"Light.h"
 using namespace glm;
 
 //auto adjust window when window is changed
@@ -34,6 +35,7 @@ glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 vector<Mesh> MeshToDraw;
+LightManager lights;
 int indexSelectedMesh = 0;
 float rotationDegree = 0.f;
 
@@ -213,25 +215,29 @@ int main(void)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 
-					
+			//light 
+			Light lightone;
+			lightone.position = vec3(0.f, 0.f, 0.f);
+			lightone.atten = vec3(1.0f, 0.09f, 0.0032f);
+			lights.Lights.push_back(lightone);
 			//light
 			unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "theLights[0].position");
-			vec3 lightPos = vec3(0.f, 0.f, 0.f);
-			glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+			//vec3 lightPos = vec3(0.f, 0.f, 0.f);
+			glUniform3f(lightPosLoc, lightone.position.x, lightone.position.y, lightone.position.z);
 
 			unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 			glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+			
 			//atten
 			unsigned int lightAttenLoc = glGetUniformLocation(shaderProgram, "theLights[0].atten");
-			vec3 lightAtten = vec3(1.0f, 0.09f, 0.0032f);
-			glUniform3f(lightAttenLoc, lightAtten.x, lightAtten.y, lightAtten.z);
-			unsigned int lightAmbLoc = glGetUniformLocation(shaderProgram, "theLights[0].ambient");
-			glUniform1f(lightAmbLoc,0.1f);
+			//vec3 lightAtten = vec3(1.0f, 0.09f, 0.0032f);
+			glUniform3f(lightAttenLoc, lightone.atten.x, lightone.atten.y, lightone.atten.z);
+			
 			unsigned int lightSpeLoc = glGetUniformLocation(shaderProgram, "theLights[0].specular");
-			glUniform1f(lightSpeLoc,1.0f);
+			glUniform1f(lightSpeLoc, lights.Lights[0].specular);
 			//color
 			unsigned int lightDiffLoc = glGetUniformLocation(shaderProgram, "theLights[0].diffuse");
-			glUniform3f(lightDiffLoc, 1.0f, 1.f, 1.f);
+			glUniform3f(lightDiffLoc, lightone.diffuse.x, lightone.diffuse.y, lightone.diffuse.z);
 
 			//get VAO Id 
 			Model mod = VAOManager.dateVAO.find(mesh.modelType)->second;

@@ -10,7 +10,7 @@ uniform vec3 ourColor;
 
 struct Light {
     vec3 position;  
-    float ambient;
+   
     vec3 diffuse;
     float specular;
 	vec3 atten;
@@ -23,10 +23,10 @@ void main()
 {
     //float specularStrength = 1.0;
     //vec3 lightColor= vec3(1.0) ;
-	//float ambientStrength = 0.1;
+	float ambientStrength = 0.1;
 	
 	//set up ambient 
-    vec3 ambient = theLights[0].ambient * theLights[0].diffuse;
+    vec3 ambient = ambientStrength * theLights[0].diffuse;
 	 
 	//diffuse 
 	vec3 norm = normalize(Normal);
