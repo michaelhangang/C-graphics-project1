@@ -16,39 +16,42 @@ struct Light {
 	vec3 atten;
 };
 
-const int NUMBEROFLIGHTS = 5;
+const int NUMBEROFLIGHTS = 1;
 uniform Light theLights[NUMBEROFLIGHTS];
 
 void main()
 {
-    //float specularStrength = 1.0;
-    //vec3 lightColor= vec3(1.0) ;
+    vec3 finalColor= vec3(0.0) ;
 	float ambientStrength = 0.1;
 	
-	//set up ambient 
-    vec3 ambient = ambientStrength * theLights[0].diffuse;
+	for(int index =0;index<NUMBEROFLIGHTS;index++){
+		//set up ambient 
+    vec3 ambient = ambientStrength * theLights[index].diffuse;
 	 
 	//diffuse 
 	vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(theLights[0].position- FragPos);
+    vec3 lightDir = normalize(theLights[index].position- FragPos);
 	float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * theLights[0].diffuse;
+    vec3 diffuse = diff * theLights[index].diffuse;
 
 	//specular 
 	vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-    vec3 specular = theLights[0].specular * spec * theLights[0].diffuse;
+    vec3 specular = theLights[index].specular * spec * theLights[index].diffuse;
 	
 	//attenua
-	float distance    = length(theLights[0].position - FragPos);
-    float attenuation = 1.0 / (theLights[0].atten.x + theLights[0].atten.y * distance +theLights[0].atten.z * (distance * distance));
+	float distance    = length(theLights[index].position - FragPos);
+    float attenuation = 1.0 / (theLights[index].atten.x + theLights[index].atten.y * distance +theLights[index].atten.z * (distance * distance));
 	ambient  *= attenuation; 
     diffuse  *= attenuation;
     specular *= attenuation;
 
 
-	vec3 result = (ambient + diffuse + specular) * ourColor;
-    FragColor = vec4(result, 1.0);
+	finalColor += (ambient + diffuse + specular) * ourColor;
+
+	
+	}
+    FragColor = vec4(finalColor, 1.0);
 	
 } 

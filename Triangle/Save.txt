@@ -1,4 +1,21 @@
-dragon1 postion 2.1 -0.2 -2.7 orientation 0 2.16421 0 scale 0.009 color 1 0.5 0.31 
-rabbit1 postion -0.5 1.49012e-08 -4 orientation 0 0 0 scale 9.7 color 0.7 0.6 0.2 
-light postion -2 1 -3.3 orientation 0 0 0 scale 0.2 color 1 1 1 
-spaceship postion 2.3 -1.6 3.7 orientation 2.14675 0 0 scale 2.2 color 1 1 1 
+dragon1
+ postion 0.9f, -0.2f, -2
+ orientation 0f, 2.16421f,0 
+ scale 0.009
+ color 1f, 0.5f, 0.31
+ rabbit1
+ postion -0.5f, 1.49012e-08f, -4
+ orientation 0f, 0f,0 
+ scale 9.7
+ color 0.7f, 0.6f, 0.2
+ light
+ postion 0f, 0f, 0
+ orientation 0f, 0f,0 
+ scale 0.2
+ color 1f, 1f, 1
+ spaceship
+ postion 7.99999f, -1.6f, 3.7
+ orientation 2.14675f, 0f,0 
+ scale 2.2
+ color 1f, 1f, 1
+ Camera1.3f,0f,1.19999

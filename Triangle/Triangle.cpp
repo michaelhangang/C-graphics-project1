@@ -25,9 +25,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 bool isShiftDownAlone(int mods);
 void SaveEverything(void);
+bool isAltDownAlone(int mods);
 
 //global variable
-glm::vec3 cameraPos = glm::vec3(0.0f,0.0f, 18.5f);
+glm::vec3 cameraPos = glm::vec3(1.3f, 0.f, 1.19999);
 glm::vec3 cameraPos2 = glm::vec3(0.0f, 5.0f, 14.5f);
 glm::vec3 cameraPos3 = glm::vec3(-5.0f, 0.0f, 14.5f);
 
@@ -94,6 +95,7 @@ int main(void)
 	unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
 	unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 	unsigned int colorLoc = glGetUniformLocation(shaderProgram, "ourColor");
+	unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 
 	
 	VAOManager VAOManager;
@@ -124,21 +126,21 @@ int main(void)
 	//
 	Mesh rabbit1("rabbit1",bunny);
 	rabbit1.pos = glm::vec3(-0.5, 1.49012e-08, -4);
-	rabbit1.scale = 9.7;
+	rabbit1.scale = 9.7f;
 	rabbit1.orientation = glm::vec3(0.f, radians(0.f), 0.f);
 	rabbit1.colour = vec3(0.7f, 0.6f, 0.2f);
 	MeshToDraw.push_back(rabbit1);
 	//
 	Mesh light("light",sphere);
-	light.pos = glm::vec3(-2, 1, -3.3);
+	light.pos = glm::vec3(-7.99999f, 0.f, 0);
 	light.scale = 0.2f;
-	//rabbit1.orientation = glm::vec3(0.f, glm::radians(0.f), 0.f);
+	light.isWireframe = true;
 	light.colour = vec3(1.f, 1.f, 1.f);
 	MeshToDraw.push_back(light);
 
 	//
 	Mesh spaceship("spaceship", ship);
-	spaceship.pos = glm::vec3(2.3, -1.6, 3.7);
+	spaceship.pos = glm::vec3(7.99999f, -1.6f, 3.7);
 	spaceship.scale = 2.2f;
 	spaceship.orientation = glm::vec3(2.14675, glm::radians(0.f), 0.f);
 	spaceship.colour = vec3(1.f, 1.f, 1.f);
@@ -176,12 +178,13 @@ int main(void)
 		//set up view and projection value in shader
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
+		
+
 
 		for (auto mesh : MeshToDraw) {
 			// create transformations
 			glm::mat4 model = glm::mat4(1.0f);
-			//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			//glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			
 			glm::mat4 rotateZ = glm::rotate(glm::mat4(1.0f),
 				mesh.orientation.z,
@@ -215,30 +218,7 @@ int main(void)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			}
 
-			//light 
-			Light lightone;
-			lightone.position = vec3(0.f, 0.f, 0.f);
-			lightone.atten = vec3(1.0f, 0.09f, 0.0032f);
-			lights.Lights.push_back(lightone);
-			//light
-			unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "theLights[0].position");
-			//vec3 lightPos = vec3(0.f, 0.f, 0.f);
-			glUniform3f(lightPosLoc, lightone.position.x, lightone.position.y, lightone.position.z);
-
-			unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
-			glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 			
-			//atten
-			unsigned int lightAttenLoc = glGetUniformLocation(shaderProgram, "theLights[0].atten");
-			//vec3 lightAtten = vec3(1.0f, 0.09f, 0.0032f);
-			glUniform3f(lightAttenLoc, lightone.atten.x, lightone.atten.y, lightone.atten.z);
-			
-			unsigned int lightSpeLoc = glGetUniformLocation(shaderProgram, "theLights[0].specular");
-			glUniform1f(lightSpeLoc, lights.Lights[0].specular);
-			//color
-			unsigned int lightDiffLoc = glGetUniformLocation(shaderProgram, "theLights[0].diffuse");
-			glUniform3f(lightDiffLoc, lightone.diffuse.x, lightone.diffuse.y, lightone.diffuse.z);
-
 			//get VAO Id 
 			Model mod = VAOManager.dateVAO.find(mesh.modelType)->second;
 			glBindVertexArray(mod.VAOId);
@@ -246,7 +226,30 @@ int main(void)
 
 		}
 		
-	
+		//light 
+		Light lightone;
+		lightone.position = vec3(0.f, 0.f, 0.f);
+		lightone.atten = vec3(1.0f, 0.09f, 0.0032f);
+		lights.Lights.push_back(lightone);
+		//light
+		unsigned int lightPosLoc = glGetUniformLocation(shaderProgram, "theLights[0].position");
+		glUniform3f(lightPosLoc, lights.Lights[0].position.x, lights.Lights[0].position.y, lights.Lights[0].position.z);
+
+
+
+		//atten
+		unsigned int lightAttenLoc = glGetUniformLocation(shaderProgram, "theLights[0].atten");
+		//vec3 lightAtten = vec3(1.0f, 0.09f, 0.0032f);
+		glUniform3f(lightAttenLoc, lights.Lights[0].atten.x, lights.Lights[0].atten.y, lights.Lights[0].atten.z);
+
+		unsigned int lightSpeLoc = glGetUniformLocation(shaderProgram, "theLights[0].specular");
+		glUniform1f(lightSpeLoc, lights.Lights[0].specular);
+		//color
+		unsigned int lightDiffLoc = glGetUniformLocation(shaderProgram, "theLights[0].diffuse");
+		glUniform3f(lightDiffLoc, lights.Lights[0].diffuse.x, lights.Lights[0].diffuse.y, lights.Lights[0].diffuse.z);
+
+		MeshToDraw[2].pos = lights.Lights[0].position;
+
 		//swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -306,15 +309,15 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 
 		//change orientation
-		if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_T ) {
 			MeshToDraw[indexSelectedMesh].orientation.x = radians(rotationDegree++);
 			cout << MeshToDraw[indexSelectedMesh].orientation.x <<" "<< rotationDegree << endl;
 		}
-		if (key == GLFW_KEY_Y && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_Y ) {
 			MeshToDraw[indexSelectedMesh].orientation.y = radians(rotationDegree++);
 			cout << MeshToDraw[indexSelectedMesh].orientation.y << " " << rotationDegree << endl;
 		}
-		if (key == GLFW_KEY_U && action == GLFW_PRESS) {
+		if (key == GLFW_KEY_U ) {
 			MeshToDraw[indexSelectedMesh].orientation.z = radians(rotationDegree++);
 			cout << MeshToDraw[indexSelectedMesh].orientation.z << " " << rotationDegree << endl;
 		}
@@ -334,6 +337,55 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 		return;
 	}
+	//adjust lights
+	if (isAltDownAlone(mods)) {
+		//change postion
+		if (key == GLFW_KEY_A) {
+			lights.Lights[0].position.x -= 0.1f;
+			cout << lights.Lights[0].position.x << endl;
+		}
+		if (key == GLFW_KEY_D) {
+			lights.Lights[0].position.x += 0.1f;
+			cout << lights.Lights[0].position.x << endl;
+		}
+		if (key == GLFW_KEY_W) {
+			lights.Lights[0].position.z += 0.1f;
+			cout << lights.Lights[0].position.z << endl;
+		}
+		if (key == GLFW_KEY_S) {
+			lights.Lights[0].position.z -= 0.1f;
+			cout << lights.Lights[0].position.z << endl;
+		}
+
+		if (key == GLFW_KEY_Q) {
+			lights.Lights[0].position.y += 0.1f;
+			cout << lights.Lights[0].position.y << endl;
+		}
+		if (key == GLFW_KEY_E) {
+			lights.Lights[0].position.y -= 0.1f;
+			cout << lights.Lights[0].position.y << endl;
+		}
+
+		//change atten
+		if (key == GLFW_KEY_1) {
+			lights.Lights[0].atten.y *= 1.1f;
+			cout << lights.Lights[0].atten.y << endl;
+		}
+		if (key == GLFW_KEY_2) {
+			lights.Lights[0].atten.y *= 0.9f;
+			cout << lights.Lights[0].atten.y << endl;
+		}
+
+		if (key == GLFW_KEY_3) {
+			lights.Lights[0].atten.z *= 1.1f;
+			cout << lights.Lights[0].atten.z << endl;
+		}
+		if (key == GLFW_KEY_4) {
+			lights.Lights[0].atten.z *= 0.9f;
+			cout << lights.Lights[0].atten.z << endl;
+		}
+		return;
+	}
 	//save 
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 		SaveEverything();
@@ -343,6 +395,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cout << indexSelectedMesh << endl;
 	}
 		
+	if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+		indexSelectedMesh--;
+		cout << indexSelectedMesh << endl;
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -363,7 +419,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cameraPos = cameraPos2;
 	if (key == GLFW_KEY_V)
 		cameraPos = cameraPos3;
-	//
+
 	
 }
 
@@ -375,19 +431,20 @@ void SaveEverything(void)
 		index != MeshToDraw.size(); index++)
 	{
 		saveFile
-			<< MeshToDraw[index].name << " postion "
-			<< MeshToDraw[index].pos.x << " "
-			<< MeshToDraw[index].pos.y << " "
-			<< MeshToDraw[index].pos.z << " orientation "
-			<< MeshToDraw[index].orientation.x << " "
-			<< MeshToDraw[index].orientation.y << " "
-			<< MeshToDraw[index].orientation.z << " scale "
-			<< MeshToDraw[index].scale << " color "
-		    << MeshToDraw[index].colour.x << " "
-		    << MeshToDraw[index].colour.y << " "
-		    << MeshToDraw[index].colour.z << " \n";
+			<< MeshToDraw[index].name << "\n postion "
+			<< MeshToDraw[index].pos.x << "f, "
+			<< MeshToDraw[index].pos.y << "f, "
+			<< MeshToDraw[index].pos.z << "\n\n orientation "
+			<< MeshToDraw[index].orientation.x << "f, "
+			<< MeshToDraw[index].orientation.y << "f,"
+			<< MeshToDraw[index].orientation.z << " \n\n scale "
+			<< MeshToDraw[index].scale << "\n\n color "
+			<< MeshToDraw[index].colour.x << "f, "
+			<< MeshToDraw[index].colour.y << "f, "
+			<< MeshToDraw[index].colour.z << "\n\n ";
 
 	}
+	saveFile <<"Camera "<< cameraPos.x << "f," << cameraPos.y << "f," << cameraPos.z;
 
 	saveFile.close();
 	cout << "Saved...." << endl;
