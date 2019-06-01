@@ -14,6 +14,7 @@ struct Light {
     vec3 diffuse;
     float specular;
 	vec3 atten;
+	float isOn;
 };
 
 const int NUMBEROFLIGHTS = 1;
@@ -25,8 +26,13 @@ void main()
 	float ambientStrength = 0.1;
 	
 	for(int index =0;index<NUMBEROFLIGHTS;index++){
+
+	   if(theLights[index].isOn ==0.0f)
+		{	// it's off
+			continue;
+		}
 		//set up ambient 
-    vec3 ambient = ambientStrength * theLights[index].diffuse;
+        vec3 ambient = ambientStrength * theLights[index].diffuse;
 	 
 	//diffuse 
 	vec3 norm = normalize(Normal);
