@@ -26,13 +26,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 bool isShiftDownAlone(int mods);
 void SaveEverything(void);
 bool isAltDownAlone(int mods);
-void drawMesh(int shaderId);
+void drawMesh(Mesh mesh,int shaderId);
+void drawLightSphere(Mesh lightSphere, int shaderId);
 
 //global variable
-glm::vec3 cameraPos = glm::vec3(4.1f, -4.3f, 11.75);
+glm::vec3 cameraPos = glm::vec3(4.1f, -4.3f, 11.75); 
 glm::vec3 cameraPos2 = glm::vec3(0.0f, 5.0f, 14.5f);
 glm::vec3 cameraPos3 = glm::vec3(-5.0f, 0.0f, 14.5f);
-
 glm::vec3 cameraTarget = glm::vec3(-0.5, 1.49012, -4);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -42,8 +42,7 @@ LightManager lights;
 int indexSelectedMesh = 0;
 int indexSelectedLight = 0;
 
-float rotationDegree = 0.f;
-
+//screen 
 int screenWidth = 1680;
 int creenHigh = 900;
 int main(void)
@@ -91,18 +90,12 @@ int main(void)
 	//delete shader object
 	glDeleteShader(vertexShader.Id);
 	glDeleteShader(fragmentShader.Id);
-
-	//draw in wireframe polygons.
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	// retrieve the matrix uniform locations
 	unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
 	unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
 	unsigned int cameraPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 
-
-
-	
 	//load model 1
 	Model dragon("dragon","xyzrgb_dragon_simple.ply");
 	VaoManager.loadModelToVAO(dragon);
@@ -117,8 +110,6 @@ int main(void)
 	Model ship("ship", "MilleniumFalcon_xyz_n_rgba_uv(simplified).ply");
 	VaoManager.loadModelToVAO(ship);
 
-
-	
 	//create dragon
 	Mesh dragon1("dragon1",dragon);
 	dragon1.pos = glm::vec3(0.9, -0.2, -2);
@@ -139,7 +130,7 @@ int main(void)
 	lightSphere.scale = 0.2f;
 	lightSphere.isWireframe = true;
 	lightSphere.colour = vec3(1.f, 0.f, 0.f);
-	MeshToDraw.push_back(lightSphere);
+	//MeshToDraw.push_back(lightSphere);
 
 	//
 	Mesh spaceship("spaceship", ship);
@@ -149,7 +140,6 @@ int main(void)
 	spaceship.colour = vec3(1.f, 1.f, 1.f);
 	MeshToDraw.push_back(spaceship);
 
-	//light
 	//light 
 	Light lightone;
 	lightone.position = vec3(0.f, 0.f, 0.f);
@@ -181,7 +171,7 @@ int main(void)
 		//camera
 		glm::mat4 view = glm::mat4(1.0f);	
 		view = glm::lookAt(cameraPos,
-			cameraPos+cameraTarget,
+			cameraPos+cameraTarget,   
 			cameraUp);
 
 		//set up view and projection value in shader
@@ -189,13 +179,17 @@ int main(void)
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniform3f(cameraPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 		
-        //let shpere postion is equal to light pos
-		MeshToDraw[2].pos = lights.Lights[0].position;
+		//draw every mesh
+		for (Mesh mesh:MeshToDraw) {
+			drawMesh(mesh,shaderProgram);
+		}
 
-		drawMesh(shaderProgram);
+		//let sphere postion is equal to light pos
+		drawLightSphere(lightSphere,shaderProgram);
 
+		//draw color
 		lights.CopyLightValuesToShader();
-		
+
 		//swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -257,16 +251,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 		//change orientation
 		if (key == GLFW_KEY_T ) {
-			MeshToDraw[indexSelectedMesh].orientation.x = radians(rotationDegree++);
-			cout << MeshToDraw[indexSelectedMesh].orientation.x <<" "<< rotationDegree << endl;
+			MeshToDraw[indexSelectedMesh].orientation.x +=0.01f ;
+			cout << MeshToDraw[indexSelectedMesh].orientation.x <<" "<< endl;
+		}
+		if (key == GLFW_KEY_G) {
+			MeshToDraw[indexSelectedMesh].orientation.x -= 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].orientation.x << " " << endl;
 		}
 		if (key == GLFW_KEY_Y ) {
-			MeshToDraw[indexSelectedMesh].orientation.y = radians(rotationDegree++);
-			cout << MeshToDraw[indexSelectedMesh].orientation.y << " " << rotationDegree << endl;
+			MeshToDraw[indexSelectedMesh].orientation.y += 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].orientation.y << " "  << endl;
+		}
+		if (key == GLFW_KEY_H) {
+			MeshToDraw[indexSelectedMesh].orientation.y -= 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].orientation.y << " " << endl;
 		}
 		if (key == GLFW_KEY_U ) {
-			MeshToDraw[indexSelectedMesh].orientation.z = radians(rotationDegree++);
-			cout << MeshToDraw[indexSelectedMesh].orientation.z << " " << rotationDegree << endl;
+			MeshToDraw[indexSelectedMesh].orientation.z += 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].orientation.z << " "  << endl;
+		}
+		if (key == GLFW_KEY_J) {
+			MeshToDraw[indexSelectedMesh].orientation.z -= 0.01f;
+			cout << MeshToDraw[indexSelectedMesh].orientation.z << " " << endl;
 		}
 		//change color
 		if (key == GLFW_KEY_1) {
@@ -327,20 +333,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
 		//change atten
 		if (key == GLFW_KEY_1) {
-			lights.Lights[indexSelectedLight].atten.y *= 1.1f;
+			lights.Lights[indexSelectedLight].atten.y -= 0.001f;
 			cout << lights.Lights[indexSelectedLight].atten.y << endl;
 		}
 		if (key == GLFW_KEY_2) {
-			lights.Lights[indexSelectedLight].atten.y *= 0.9f;
+			lights.Lights[indexSelectedLight].atten.y += 0.001f;
 			cout << lights.Lights[indexSelectedLight].atten.y << endl;
 		}
 
 		if (key == GLFW_KEY_3) {
-			lights.Lights[indexSelectedLight].atten.z *= 1.1f;
+			lights.Lights[indexSelectedLight].atten.z -= 0.001f;
 			cout << lights.Lights[indexSelectedLight].atten.z << endl;
 		}
 		if (key == GLFW_KEY_4) {
-			lights.Lights[indexSelectedLight].atten.z *= 0.9f;
+			lights.Lights[indexSelectedLight].atten.z += 0.001f;
 			cout << lights.Lights[indexSelectedLight].atten.z << endl;
 		}
 		if (key == GLFW_KEY_P && action == GLFW_PRESS) {
@@ -383,8 +389,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		cameraPos = cameraPos2;
 	if (key == GLFW_KEY_V)
 		cameraPos = cameraPos3;
-
-	
 }
 
 void SaveEverything(void)
@@ -452,8 +456,8 @@ bool isAltDownAlone(int mods)
 	return false;
 }
 
-void drawMesh(int shaderId) {
-	for (Mesh mesh : MeshToDraw) {
+void drawMesh(Mesh mesh,int shaderId) {
+	//for (Mesh mesh : MeshToDraw) {
 		// create transformations
 		glm::mat4 model = glm::mat4(1.0f);
 
@@ -491,15 +495,20 @@ void drawMesh(int shaderId) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
-
 		//get VAO Id 
 		Model mod = VaoManager.dateVAO.find(mesh.modelType)->second;
 		glBindVertexArray(mod.VAOId);
 		glDrawElements(GL_TRIANGLES, mod.numberOfIndices, GL_UNSIGNED_INT, 0);
+}
+void drawLightSphere(Mesh mesh,int shaderId) {
+	unsigned int sphereColourLoc = glGetUniformLocation(shaderId, "sphereColor");
+	unsigned int  isLightLoc = glGetUniformLocation(shaderId, "isLightSphere");
+	glUniform1f(isLightLoc, (float)GL_TRUE);
+	glUniform3f(sphereColourLoc, 1.0f, 1.0f, 1.0f);
+	mesh.pos = lights.Lights[0].position;
 
-	}
-
-
-
+	//draw lightphere 
+	drawMesh(mesh, shaderId);
+	glUniform1f(isLightLoc, (float)GL_FALSE);
 
 }

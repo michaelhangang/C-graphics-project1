@@ -6,7 +6,8 @@ out vec4 FragColor;
 
 uniform vec3 viewPos;
 uniform vec3 ourColor;
-
+uniform vec3 sphereColor;
+uniform bool isLightSphere;
 
 struct Light {
     vec3 position;  
@@ -25,13 +26,19 @@ void main()
     vec3 finalColor= vec3(0.0) ;
 	float ambientStrength = 0.1;
 	
+	if(isLightSphere){
+	    FragColor = vec4(sphereColor, 1.0);
+		return;
+	}
+	
 	for(int index =0;index<NUMBEROFLIGHTS;index++){
-
+	   
+	//if light is off 
 	   if(theLights[index].isOn ==0.0f)
-		{	// it's off
+		{
 			continue;
 		}
-		//set up ambient 
+	//set up ambient 
         vec3 ambient = ambientStrength * theLights[index].diffuse;
 	 
 	//diffuse 
