@@ -3,7 +3,7 @@
 Light::Light() {
 	position = vec3(0.0,0.0,0.0);
 	diffuse = vec3(1.f,1.f,1.f);
-	specular = 1.0f;
+	specular = 0.5f;
 	atten = vec3(1.0f, 0.09f, 0.0032f);
 	isOn = 1.0f;
 

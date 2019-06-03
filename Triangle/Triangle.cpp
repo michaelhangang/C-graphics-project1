@@ -300,6 +300,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				indexSelectedMesh = 0;
 			cout << indexSelectedMesh << endl;
 		}
+		if (key == GLFW_KEY_L && action == GLFW_PRESS)
+			MeshToDraw[indexSelectedMesh].isWireframe = true;
+		if (key == GLFW_KEY_K && action == GLFW_PRESS)
+			MeshToDraw[indexSelectedMesh].isWireframe = false;
 		return;
 	}
 	//adjust lights
@@ -362,13 +366,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 				indexSelectedLight = 0;
 			cout << indexSelectedLight << endl;
 		}
+		//light is on or off
+		if (key == GLFW_KEY_L && action == GLFW_PRESS)
+			lights.Lights[indexSelectedLight].turnOff();
+		if (key == GLFW_KEY_K && action == GLFW_PRESS)
+			lights.Lights[indexSelectedLight].turnOn();
 		return;
 	}
 	//save 
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 		SaveEverything();
 
-	
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 

@@ -18,7 +18,7 @@ struct Light {
 	float isOn;
 };
 
-const int NUMBEROFLIGHTS = 1;
+const int NUMBEROFLIGHTS = 5;
 uniform Light theLights[NUMBEROFLIGHTS];
 
 void main()

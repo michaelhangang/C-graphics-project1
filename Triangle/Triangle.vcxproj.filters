@@ -27,9 +27,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -47,6 +44,9 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>LightManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Project.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -76,19 +76,25 @@
     <None Include="fragment.glsl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="bun.ply">
-      <Filter>Mesh</Filter>
-    </None>
-    <None Include="dolphin_xyzn.ply">
-      <Filter>Mesh</Filter>
-    </None>
     <None Include="xyzrgb_dragon_simple.ply">
       <Filter>Mesh</Filter>
     </None>
     <None Include="Sphere.ply">
       <Filter>Mesh</Filter>
     </None>
-    <None Include="MilleniumFalcon_xyz_n_rgba_uv(simplified).ply">
+    <None Include="BM_3d_Low.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="Thenatarius.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="owl-monk-fixed-mesh.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="free_arena_ASCII_xyz.ply">
+      <Filter>Mesh</Filter>
+    </None>
+    <None Include="Dragon 2.5_ply.ply">
       <Filter>Mesh</Filter>
     </None>
   </ItemGroup>

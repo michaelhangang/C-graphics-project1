@@ -1,2 +1,11 @@
-﻿  Triangle.cpp
-  Triangle.vcxproj -> E:\GitHub\C-graphics-project1\x64\Debug\Triangle.exe
+﻿d:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(452,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Triangle.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  glad.c
+  Light.cpp
+  Mesh.cpp
+  Model.cpp
+  Shader.cpp
+  Project.cpp
+  VAOManager.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Triangle.vcxproj -> E:\GitHub\C-graphics-project1\x64\Debug\Project1.exe

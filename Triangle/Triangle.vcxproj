@@ -24,6 +24,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Triangle</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Project1</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -158,7 +159,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Project.cpp" />
     <ClCompile Include="VAOManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,11 +171,13 @@
     <ClInclude Include="Shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bun.ply" />
-    <None Include="dolphin_xyzn.ply" />
+    <None Include="BM_3d_Low.ply" />
+    <None Include="Dragon 2.5_ply.ply" />
     <None Include="fragment.glsl" />
-    <None Include="MilleniumFalcon_xyz_n_rgba_uv(simplified).ply" />
+    <None Include="free_arena_ASCII_xyz.ply" />
+    <None Include="owl-monk-fixed-mesh.ply" />
     <None Include="Sphere.ply" />
+    <None Include="Thenatarius.ply" />
     <None Include="vertex.glsl" />
     <None Include="xyzrgb_dragon_simple.ply" />
   </ItemGroup>
