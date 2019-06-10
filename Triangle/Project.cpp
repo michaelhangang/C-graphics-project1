@@ -24,10 +24,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //input control
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 bool isShiftDownAlone(int mods);
+bool isCtrlDownAlone(int mods);
 void SaveEverything(void);
 bool isAltDownAlone(int mods);
 void drawMesh(Mesh mesh,int shaderId);
 void drawLightSphere(Mesh lightSphere, int shaderId);
+void drawSpotLightSphere(Mesh lightSphere, int shaderId);
 
 //global variable
 glm::vec3 cameraPos = glm::vec3(-13, -18.7998, 73.4994);
@@ -41,6 +43,7 @@ VAOManager VaoManager;
 LightManager lights;
 int indexSelectedMesh = 0;
 int indexSelectedLight = 0;
+int indexSelectedSpotLight = 0;
 int view = 0;
 //screen 
 int screenWidth = 1680;
@@ -304,7 +307,16 @@ int main(void)
 	light5.atten = vec3(1, 0.015, 0.00501816);
 	light5.diffuse = vec3(1, 1.82, 1);
 	lights.Lights.push_back(light5);
-	lights.GetUniformLocations(shaderProgram);
+	lights.GetPointLightsUniformLocations(shaderProgram);
+
+	//Spot
+	SpotLight spotLight1;
+	spotLight1.position = vec3(-15.1999, 2, 25.1001);
+	//spotLight1.turnOff();
+	spotLight1.atten = vec3(1, 0.015, 0.00501816);
+	spotLight1.direction = vec3(-28.8, -2.4, -3.1);
+	lights.SpotLights.push_back(spotLight1);
+	lights.GetSpotLightsUniformLocations(shaderProgram);
 
 //draw graphics
 	while (!glfwWindowShouldClose(window))
@@ -345,11 +357,11 @@ int main(void)
 		}
 
 		//draw light sphere
-		//drawLightSphere(lightSphere,shaderProgram);
-
+		drawLightSphere(lightSphere,shaderProgram);
+		drawSpotLightSphere(lightSphere, shaderProgram);
 		//draw color
-		lights.CopyLightValuesToShader();
-
+		lights.CopyPointLightsValuesToShader();
+		lights.CopySpotLightsValuesToShader();
 		//swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -572,6 +584,123 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 		return;
 	}
+
+	if( isCtrlDownAlone( mods)) {
+		//change postion
+		if (key == GLFW_KEY_A) {
+			lights.SpotLights[indexSelectedSpotLight].position.x -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.x << endl;
+		}
+		if (key == GLFW_KEY_D) {
+			lights.SpotLights[indexSelectedSpotLight].position.x += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.x << endl;
+		}
+		if (key == GLFW_KEY_W) {
+			lights.SpotLights[indexSelectedSpotLight].position.z += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.z << endl;
+		}
+		if (key == GLFW_KEY_S) {
+			lights.SpotLights[indexSelectedSpotLight].position.z -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.z << endl;
+		}
+
+		if (key == GLFW_KEY_Q) {
+			lights.SpotLights[indexSelectedSpotLight].position.y += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.y << endl;
+		}
+		if (key == GLFW_KEY_E) {
+			lights.SpotLights[indexSelectedSpotLight].position.y -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].position.y << endl;
+		}
+
+		//change atten
+		if (key == GLFW_KEY_1 == GLFW_PRESS) {
+			lights.SpotLights[indexSelectedSpotLight].atten.y -= 0.001f;
+			cout << lights.SpotLights[indexSelectedSpotLight].atten.y << endl;
+		}
+		if (key == GLFW_KEY_2 == GLFW_PRESS) {
+			lights.SpotLights[indexSelectedSpotLight].atten.y += 0.001f;
+			cout << lights.SpotLights[indexSelectedSpotLight].atten.y << endl;
+		}
+
+		if (key == GLFW_KEY_3 == GLFW_PRESS) {
+			lights.SpotLights[indexSelectedSpotLight].atten.z *= 0.9f;
+			cout << lights.SpotLights[indexSelectedSpotLight].atten.z << endl;
+		}
+		if (key == GLFW_KEY_4 == GLFW_PRESS) {
+			lights.SpotLights[indexSelectedSpotLight].atten.z *= 1.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].atten.z << endl;
+		}
+		if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+			indexSelectedSpotLight++;
+			if (indexSelectedSpotLight == lights.SpotLights.size())
+				indexSelectedSpotLight = 0;
+			cout << indexSelectedSpotLight << endl;
+		}
+
+		if (key == GLFW_KEY_O && action == GLFW_PRESS) {
+			indexSelectedSpotLight--;
+			if (indexSelectedSpotLight < 0)
+				indexSelectedSpotLight = 0;
+			cout << indexSelectedSpotLight << endl;
+		}
+		//light is on or off
+		if (key == GLFW_KEY_L && action == GLFW_PRESS)
+			lights.SpotLights[indexSelectedSpotLight].turnOff();
+		if (key == GLFW_KEY_K && action == GLFW_PRESS)
+			lights.SpotLights[indexSelectedSpotLight].turnOn();
+
+		//change color
+		if (key == GLFW_KEY_5) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.x += 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.x << endl;
+		}
+		if (key == GLFW_KEY_6) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.x -= 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.x << endl;
+		}
+		if (key == GLFW_KEY_7) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.y += 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.y << endl;
+		}
+		if (key == GLFW_KEY_8) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.y -= 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.y << endl;
+		}
+		if (key == GLFW_KEY_9) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.z += 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.z << endl;
+		}
+		if (key == GLFW_KEY_0) {
+			lights.SpotLights[indexSelectedSpotLight].diffuse.z -= 0.01f;
+			cout << lights.SpotLights[indexSelectedSpotLight].diffuse.z << endl;
+		}
+		if (key == GLFW_KEY_Z) {
+			lights.SpotLights[indexSelectedSpotLight].direction.x += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.x << endl;
+		}
+		if (key == GLFW_KEY_X) {
+			lights.SpotLights[indexSelectedSpotLight].direction.x -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.x << endl;
+		}
+		if (key == GLFW_KEY_C) {
+			lights.SpotLights[indexSelectedSpotLight].direction.y += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.y << endl;
+		}
+		if (key == GLFW_KEY_V) {
+			lights.SpotLights[indexSelectedSpotLight].direction.y -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.y << endl;
+		}
+		if (key == GLFW_KEY_B) {
+			lights.SpotLights[indexSelectedSpotLight].direction.z += 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.z<< endl;
+		}
+		if (key == GLFW_KEY_N) {
+			lights.SpotLights[indexSelectedSpotLight].direction.z -= 0.1f;
+			cout << lights.SpotLights[indexSelectedSpotLight].direction.z << endl;
+		}
+		return;
+	}
 	//save 
 	if (key == GLFW_KEY_Z && action == GLFW_PRESS)
 		SaveEverything();
@@ -671,7 +800,14 @@ bool isAltDownAlone(int mods)
 	}
 	return false;
 }
+bool isCtrlDownAlone(int mods) {
+	if ((mods & GLFW_MOD_CONTROL) == GLFW_MOD_CONTROL)
+	{
+		return true;
+	}
+	return false;
 
+}
 void drawMesh(Mesh mesh,int shaderId) {
 	//for (Mesh mesh : MeshToDraw) {
 		// create transformations
@@ -725,6 +861,18 @@ void drawLightSphere(Mesh mesh,int shaderId) {
 
 	//draw lightphere 
 	drawMesh(mesh, shaderId);
+	glUniform1f(isLightLoc, (float)GL_FALSE);
+
+}
+void drawSpotLightSphere(Mesh lightSphere, int shaderId) {
+	unsigned int sphereColourLoc = glGetUniformLocation(shaderId, "sphereColor");
+	unsigned int  isLightLoc = glGetUniformLocation(shaderId, "isLightSphere");
+	glUniform1f(isLightLoc, (float)GL_TRUE);
+	glUniform3f(sphereColourLoc, 1.0f, 1.0f, 1.0f);
+	lightSphere.pos = lights.SpotLights[indexSelectedSpotLight].position;
+
+	//draw lightphere 
+	drawMesh(lightSphere, shaderId);
 	glUniform1f(isLightLoc, (float)GL_FALSE);
 
 }

@@ -14,10 +14,10 @@ public:
 	float specular;
 	vec3 atten;
 	float isOn;
-	unsigned int lightPosLoc ;
-	unsigned int lightSpeLoc ;
-	unsigned int lightAttenLoc ;
-	unsigned int lightDiffLoc ;
+	unsigned int lightPosLoc;
+	unsigned int lightSpeLoc;
+	unsigned int lightAttenLoc;
+	unsigned int lightDiffLoc;
 	unsigned int lightIsONLoc;
 
 	Light();
@@ -25,6 +25,32 @@ public:
 	void turnOn();
 };
 
+class SpotLight {
+public:
+	vec3 position;
+	vec3 diffuse;
+	float specular;
+	vec3 atten;
+	float isOn;
+
+	vec3 direction;
+	float cutOff;
+	float outerCutOff;
+
+	unsigned int SpotlightPosLoc;
+	unsigned int SpotlightSpeLoc;
+	unsigned int SpotlightAttenLoc;
+	unsigned int SpotlightDiffLoc;
+	unsigned int SpotlightIsONLoc;
+
+	unsigned int SpotlightDirLoc;
+	unsigned int SpotlightcutOffLoc;
+	unsigned int SpotlightouterCutOffLoc;
+
+	SpotLight();
+	void turnOff();
+	void turnOn();
+};
 
 class LightManager
 {
@@ -32,10 +58,13 @@ public:
 	//static const unsigned int NUMBEROFLIGHTS = 5;
 
 	vector<Light> Lights;
+	vector<SpotLight> SpotLights;
 	LightManager();
 
-	void GetUniformLocations(int shaderID);
-	
-	void CopyLightValuesToShader(void);
+	void GetPointLightsUniformLocations(int shaderID);
+	void CopyPointLightsValuesToShader(void);
+
+	void GetSpotLightsUniformLocations(int shaderID);
+	void CopySpotLightsValuesToShader(void);
 
 };
