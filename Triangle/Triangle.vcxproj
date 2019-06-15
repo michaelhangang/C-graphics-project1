@@ -173,6 +173,7 @@
   <ItemGroup>
     <None Include="BM_3d_Low.ply" />
     <None Include="Dragon 2.5_ply.ply" />
+    <None Include="Falcon_Body_054217_verts.ply" />
     <None Include="fragment.glsl" />
     <None Include="free_arena_ASCII_xyz.ply" />
     <None Include="owl-monk-fixed-mesh.ply" />
